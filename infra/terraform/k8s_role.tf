@@ -8,12 +8,12 @@ resource "aws_iam_policy" "k8s_policy" {
     Statement = [
       {
         Action = [
-          "s3:GetObject",
+          "*",
         ]
         Effect   = "Allow"
         Resource = [
-
- "arn:aws:s3:::demo-talk-with-anu/*" ]
+          "*"
+        ]
       },
     ]
   })
@@ -39,7 +39,7 @@ resource "aws_iam_role" "k8s-role" {
 }
 
 resource "aws_iam_policy_attachment" "k8s-attach" {
-  name       = "k8s-attachment"
+  name       = "k8s-policy-attachment"
   roles      = [aws_iam_role.k8s-role.name]
   policy_arn = aws_iam_policy.k8s_policy.arn
 }

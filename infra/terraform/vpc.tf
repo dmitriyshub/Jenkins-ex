@@ -46,3 +46,8 @@ resource "aws_route_table_association" "subnet_public_assosiacion1" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.vpc_route_table_public.id
 }
+
+resource "aws_eip" "lb" {
+  instance = aws_instance.jenkinsInstance.id
+  vpc      = true
+}

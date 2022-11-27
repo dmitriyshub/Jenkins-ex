@@ -1,7 +1,7 @@
 
 // Launching k8s EC2 instance
 resource "aws_instance" "k8sInstance" {
-    ami = var.ami_id
+    ami = var.k8s_ami
     instance_type = "t2.micro"
     key_name = "my_key"
     vpc_security_group_ids = ["${aws_security_group.allow_tcp_k8s.id}"]
@@ -15,11 +15,13 @@ resource "aws_instance" "k8sInstance" {
 
 // Launching Jenkins EC2 instance
 resource "aws_instance" "jenkinsInstance" {
-    ami = var.ami_id
+    ami = var.jenkins_id
     instance_type = "t2.micro"
     key_name = "my_key"
-    vpc_security_group_ids = ["${aws_security_group.allow_tcp_jen.id}"]
+    vpc_security_group_ids = ["${aws_security_group.allow_tcp_jenkins.id}"]
     subnet_id = aws_subnet.public_subnet.id
+    iam_instance_profile = aws_iam_instance_profile.k8s-profile.name
+
     tags = {
         Name = "jenkinsInstance"
     }

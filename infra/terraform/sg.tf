@@ -1,6 +1,6 @@
 // Creating aws security resource for Jenkins
-resource "aws_security_group" "allow_tcp_jen" {
-  name        = "allow_tcp"
+resource "aws_security_group" "allow_tcp_jenkins" {
+  name        = "allow_tcp_jenkins"
   description = "Allow TCP inbound traffic"
   vpc_id      = aws_vpc.main_vpc.id
 
@@ -34,7 +34,7 @@ resource "aws_security_group" "allow_tcp_jen" {
 
 // Creating aws security resource for k8s
 resource "aws_security_group" "allow_tcp_k8s" {
-  name        = "allow_tcp"
+  name        = "allow_tcp_k8s"
   description = "Allow TCP inbound traffic"
   vpc_id      = aws_vpc.main_vpc.id
 
