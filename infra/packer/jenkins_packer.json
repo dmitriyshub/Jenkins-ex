@@ -1,0 +1,80 @@
+{
+  "min_packer_version": "1.4.2",
+  "variables": {
+    "ami_name": "Jenkins-amzn",
+    "aws_region": "us-west-2",
+    "aws_profile": "default",
+    "aws_tag_ENVIRONMENT": "NON-PRODUCTION",
+    "aws_tag_OWNER": "Packer",
+    "aws_tag_PROJECT": "Jenkins-ec2"
+  },
+  "builders": [
+    {
+      "ami_name": "{{user `ami_name` | clean_resource_name}}",
+      "ami_description": "An Amazon Linux 2 AMI Image.",
+      "instance_type": "t2.small",
+      "region": "{{user `aws_region`}}",
+      "profile": "{{user `aws_profile`}}",
+      "spot_price": "auto",
+      "spot_price_auto_product": "Linux/UNIX",
+      "spot_tags": {
+        "ENVIRONMENT": "{{user `aws_tag_ENVIRONMENT`}}",
+        "OWNER": "{{user `aws_tag_OWNER`}}",
+        "PROJECT": "{{user `aws_tag_PROJECT`}}"
+      },
+      "type": "amazon-ebs",
+      "ssh_interface": "public_ip",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "architecture": "x86_64",
+          "name": "*amzn2-ami-hvm-*",
+          "block-device-mapping.volume-type": "gp2",
+          "root-device-type": "ebs"
+        },
+        "owners": [
+          "amazon"
+        ],
+        "most_recent": true
+      },
+      "run_tags": {
+        "Name": "packer-builder-basebuild-amzn-linux2",
+        "ENVIRONMENT": "{{user `aws_tag_ENVIRONMENT`}}",
+        "OWNER": "{{user `aws_tag_OWNER`}}",
+        "PROJECT": "{{user `aws_tag_PROJECT`}}"
+      },
+      "run_volume_tags": {
+        "Name": "packer-builder-basebuild-amzn-linux2",
+        "ENVIRONMENT": "{{user `aws_tag_ENVIRONMENT`}}",
+        "OWNER": "{{user `aws_tag_OWNER`}}",
+        "PROJECT": "{{user `aws_tag_PROJECT`}}"
+      },
+      "tags": {
+        "Name": "{{user `ami_name`}}",
+        "ENVIRONMENT": "{{user `aws_tag_ENVIRONMENT`}}",
+        "OWNER": "{{user `aws_tag_OWNER`}}",
+        "PROJECT": "{{user `aws_tag_PROJECT`}}"
+      },
+      "snapshot_tags": {
+        "Name": "{{user `ami_name`}}",
+        "ENVIRONMENT": "{{user `aws_tag_ENVIRONMENT`}}",
+        "OWNER": "{{user `aws_tag_OWNER`}}",
+        "PROJECT": "{{user `aws_tag_PROJECT`}}"
+      },
+      "ssh_username": "ec2-user"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "./jenkins_userdata.sh"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "manifest_basebuild-amznlinux2-{{user `aws_profile`}}-{{user `aws_region`}}-{{isotime \"2006-01-02_1504\"}}.json",
+      "strip_path": true
+    }
+  ]
+}
