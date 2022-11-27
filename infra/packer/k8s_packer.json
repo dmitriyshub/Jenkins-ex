@@ -1,12 +1,12 @@
 {
   "min_packer_version": "1.4.2",
   "variables": {
-    "ami_name": "Jenkins-amzn-{{isotime \"2006-01-02_1504\"}}",
+    "ami_name": "k8s-amzn-{{isotime \"2006-01-02_1504\"}}",
     "aws_region": "us-west-2",
     "aws_profile": "default",
     "aws_tag_ENVIRONMENT": "dev",
     "aws_tag_OWNER": "Packer",
-    "aws_tag_PROJECT": "Jenkins-ec2"
+    "aws_tag_PROJECT": "k8s-ec2"
   },
   "builders": [
     {
@@ -67,13 +67,13 @@
   "provisioners": [
     {
       "type": "shell",
-      "script": "./jenkins_userdata.sh"
+      "script": "./k8s_userdata.sh"
     }
   ],
   "post-processors": [
     {
       "type": "manifest",
-      "output": "jenkins-{{user `aws_profile`}}-{{user `aws_region`}}-{{isotime \"2006-01-02_1504\"}}.json",
+      "output": "k8s-{{user `aws_profile`}}-{{user `aws_region`}}-{{isotime \"2006-01-02_1504\"}}.json",
       "strip_path": true
     }
   ]

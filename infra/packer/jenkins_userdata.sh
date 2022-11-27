@@ -3,10 +3,9 @@
 # Pre
 sudo yum update –y
 sudo amazon-linux-extras install epel -y
-sudo apt-get install software-properties-common -y
 
 # Docker
-sudo amazon-linux-extras install docker
+sudo amazon-linux-extras install docker -y
 sudo service docker start
 sudo systemctl enable docker
 
@@ -27,3 +26,9 @@ sudo amazon-linux-extras install ansible2 -y
 # users to group
 sudo usermod -a -G docker ec2-user
 sudo usermod -a -G docker jenkins
+
+# Install the ECR Credentials helper
+amazon-linux-extras enable docker
+yum install amazon-ecr-credential-helper
+sudo -u jenkins mkdir -p /var/lib/jenkins/.docker
+echo '{"credsStore": "ecr-login"}' | sudo -u jenkins tee /var/lib/jenkins/.docker/config.json
