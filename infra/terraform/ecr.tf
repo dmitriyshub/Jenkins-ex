@@ -36,3 +36,13 @@ resource "aws_ecr_repository" "worker_prod" {
     scan_on_push = true
   }
 }
+
+resource "aws_ecr_repository" "jenkins_agent" {
+  name                 = "dmitriyshub-agent"
+  image_tag_mutability = "MUTABLE"
+
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
