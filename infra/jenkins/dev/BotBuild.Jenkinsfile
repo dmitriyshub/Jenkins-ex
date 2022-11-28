@@ -12,6 +12,7 @@ pipeline {
         IMAGE_TAG = "0.0.$BUILD_NUMBER"
         IMAGE_NAME = "dmitriyshub-bot-dev"
         REGION_NAME = "us-west-2"
+        DOCKER_FILE_PATH = "services/bot/Dockerfile"
     }
 
     options {
@@ -29,7 +30,7 @@ pipeline {
             steps {
                 // TODO dev bot build stage
                 sh '''
-                docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                docker build -t $IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
                 docker tag $IMAGE_NAME:$IMAGE_TAG $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
                 docker push $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
                 '''
