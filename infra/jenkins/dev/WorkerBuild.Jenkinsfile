@@ -10,7 +10,7 @@ pipeline {
     environment {
         REGISTRY_URL = "352708296901.dkr.ecr.us-west-2.amazonaws.com"
         IMAGE_TAG = "0.0.$BUILD_NUMBER"
-        IMAGE_NAME = "dmitriyshub_worker_dev"
+        IMAGE_NAME = "dmitriyshub-worker-dev"
         REGION_NAME = "us-west-2"
     }
 
