@@ -12,6 +12,7 @@ pipeline {
         IMAGE_TAG = "0.0.$BUILD_NUMBER"
         IMAGE_NAME = "dmitriyshub-worker-dev"
         REGION_NAME = "us-west-2"
+        DOCKER_FILE_PATH = "services/worker/Dockerfile"
     }
 
     options {
@@ -29,7 +30,8 @@ pipeline {
             steps {
                 // TODO dev bot build stage
                 sh '''
-                docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                aws ecr get-login-password --region $REGION_NAME | docker login --username AWS --password-stdin $REGISTRY_URL
+                docker build -t $IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
                 docker tag $IMAGE_NAME:$IMAGE_TAG $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
                 docker push $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
                 '''
