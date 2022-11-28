@@ -22,6 +22,12 @@ resource "aws_instance" "jenkinsInstance" {
     subnet_id = aws_subnet.public_subnet.id
     iam_instance_profile = aws_iam_instance_profile.k8s-profile.name
 
+    root_block_device {
+      tags                  = {}
+      volume_size           = 30
+
+  }
+
     tags = {
         Name = "jenkinsInstance"
     }
