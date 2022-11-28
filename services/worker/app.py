@@ -6,7 +6,7 @@ from loguru import logger
 from common.utils import search_download_youtube_video
 import os
 import sys
-sys.path.append(../../)
+sys.path.append('../../')
 
 def process_msg(msg):
     downloaded_videos = search_download_youtube_video(msg)
