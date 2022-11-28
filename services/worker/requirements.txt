@@ -6,4 +6,3 @@ unittest2
 boto3
 pylint_junit
 pylint
-import sys
