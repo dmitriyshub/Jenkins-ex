@@ -15,7 +15,7 @@ resource "aws_instance" "k8sInstance" {
 
 // Launching Jenkins EC2 instance
 resource "aws_instance" "jenkinsInstance" {
-    ami = var.jenkins_id
+    ami = var.jenkins_ami
     instance_type = "t2.micro"
     key_name = "my_key"
     vpc_security_group_ids = ["${aws_security_group.allow_tcp_jenkins.id}"]

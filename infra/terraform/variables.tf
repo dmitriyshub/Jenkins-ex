@@ -3,12 +3,12 @@ variable "key_name" {
   default     = "my_key"
 }
 
-variable "jenkins_id" {
+variable "jenkins_ami" {
   description = "jenkins_ami_id"
-  default     = "ami-0996adae06dd4e01f"
+  default     = "ami-01c82e0df2f2136f6"
 }
 
 variable "k8s_ami" {
   description = "k8s_ami_id"
-  default     = "ami-03f37d57f7425c25c"
+  default     = "ami-0b782e3168c62cf7b"
 }
