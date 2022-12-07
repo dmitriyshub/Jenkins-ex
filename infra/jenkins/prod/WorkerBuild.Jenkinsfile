@@ -37,6 +37,15 @@ pipeline {
                 '''
             }
         }
+
+        stage('Trigger Deploy') {
+            steps {
+                build job: 'WorkerDeploy', wait: false, parameters: [
+                    string(name: 'WORKER_IMAGE_NAME', value: "${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}")
+                ]
+            }
+        }
     }
+
     // TODO prod worker build stage
 }
