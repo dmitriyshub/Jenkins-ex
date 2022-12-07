@@ -11,9 +11,9 @@ pipeline {
         APP_ENV = "prod"
     }
 
-//     parameters {
-//         string(name: 'BOT_IMAGE_NAME')
-//     }
+    parameters {
+        string(name: 'BOT_IMAGE_NAME')
+    }
 
     stages {
         stage('Bot Deploy') {
