@@ -12,7 +12,7 @@ pipeline {
     }
 
     parameters {
-        string(name: 'BOT_IMAGE_NAME')
+        run(name: 'BOT_IMAGE_NAME')
     }
 
     stages {
