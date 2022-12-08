@@ -40,11 +40,13 @@ pipeline {
         }
 
         stage('Bot Test') {
-            withCredentials([string(credentialsId: 'snyk', variable: 'SNYK_TOKEN')]) {
+            steps {
+                withCredentials([string(credentialsId: 'snyk', variable: 'SNYK_TOKEN')]) {
                     sh '''
                     snyk container test $FULL_URL --severity-threshold=high --file=./$DOCKER_FILE_PATH
                     '''
                }
+            }
         }
 
         stage('Trigger Bot Deploy') {
