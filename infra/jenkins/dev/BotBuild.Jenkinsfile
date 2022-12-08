@@ -23,13 +23,12 @@ pipeline {
     }
 
     stages {
-        stage('Bot Build Image') {
+        stage('Build Bot Image') {
             options {
                 timeout(time: 10, unit: 'MINUTES')
             }
 
             steps {
-                // TODO dev bot build stage
                 sh '''
                 aws ecr get-login-password --region $REGION_NAME | docker login --username AWS --password-stdin $REGISTRY_URL
                 docker build -t $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
@@ -38,7 +37,7 @@ pipeline {
             }
         }
 
-        stage('Bot Test Image') {
+        stage('Test Bot Image') {
             steps {
                 withCredentials([string(credentialsId: 'snyk', variable: 'SNYK_TOKEN')]) {
                     sh '''
@@ -48,7 +47,7 @@ pipeline {
             }
         }
 
-        stage('Bot Push Image') {
+        stage('Push Bot Image') {
             options {
                 timeout(time: 5, unit: 'MINUTES')
             }
