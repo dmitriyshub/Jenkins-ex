@@ -23,8 +23,7 @@ pipeline {
     }
 
     stages {
-
-        stage('Bot Build') {
+        stage('Bot Build Image') {
             options {
                 timeout(time: 10, unit: 'MINUTES')
             }
@@ -39,13 +38,24 @@ pipeline {
             }
         }
 
-        stage('Bot Test') {
+        stage('Bot Test Image') {
             steps {
                 withCredentials([string(credentialsId: 'snyk', variable: 'SNYK_TOKEN')]) {
                     sh '''
                     snyk container test $FULL_URL --severity-threshold=high --file=./$DOCKER_FILE_PATH
                     '''
                }
+            }
+        }
+
+        stage('Bot Push Image') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
+            steps {
+                sh '''
+                docker push $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
+                '''
             }
         }
 
