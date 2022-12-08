@@ -16,7 +16,6 @@ resource "null_resource" "key-perm" {
 }
 module "key_pair" {
   source = "terraform-aws-modules/key-pair/aws"
-
-  key_name   = "my_key"
+  key_name   = var.key_name
   public_key = tls_private_key.ec2_private_key.public_key_openssh
 }
