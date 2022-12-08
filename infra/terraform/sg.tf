@@ -27,7 +27,7 @@ resource "aws_security_group" "allow_tcp_jenkins" {
   }
 
   tags = {
-      Name = "main_sg"
+      Name = "jenkins-sg"
 
   }
 }
@@ -85,7 +85,7 @@ resource "aws_security_group" "allow_tcp_k8s" {
   }
 
   tags = {
-      Name = "main_sg"
+      Name = "k8s-sg"
 
   }
 }

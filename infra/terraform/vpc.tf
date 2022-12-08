@@ -1,19 +1,19 @@
 resource "aws_vpc" "main_vpc" {
- cidr_block = "10.1.0.0/16"
+ cidr_block = var.vpc_cidr
  enable_dns_support = true
  enable_dns_hostnames = true
- instance_tenancy = "default"
+ instance_tenancy = var.vpc_tenancy
  tags = {
-   Name = "myVpc"
+   Name = "bot-vpc"
  }
 }
 resource "aws_subnet" "public_subnet" {
- cidr_block = "10.1.1.0/24"
+ cidr_block = var.public_subnet_cidr
  vpc_id     = aws_vpc.main_vpc.id
- availability_zone = "us-west-2a"
+ availability_zone = var.availability_zone
  map_public_ip_on_launch = true
  tags = {
-   Name = "myPublicSubnet"
+   Name = "bot-public-subnet"
  }
 }
 
@@ -21,7 +21,7 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_internet_gateway" "vpc_internet_gateway" { # terraform id&name
   vpc_id = aws_vpc.main_vpc.id # attach to vpc
   tags = {
-      Name = "internetGateway"
+      Name = "bot-internet-gateway"
 
   }
 }
@@ -31,12 +31,12 @@ resource "aws_route_table" "vpc_route_table_public" {
   vpc_id = aws_vpc.main_vpc.id # attach to vpc
 
   route {
-    cidr_block = "0.0.0.0/0" # ip range for this route
+    cidr_block = var.egress_cidr # ip range for this route
     gateway_id = aws_internet_gateway.vpc_internet_gateway.id # attach to internet gateway
   }
 
   tags = {
-      Name = "publicRouteTable"
+      Name = "bot-public-route-table"
 
   }
 }

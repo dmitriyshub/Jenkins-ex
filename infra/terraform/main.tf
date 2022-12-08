@@ -3,8 +3,9 @@ provider "aws" {
   region = "us-west-2"
    default_tags {
    tags = {
-     Environment = "Test"
-     Owner       = "TF"
+     User = "dmitriyshub"
+     Environment = "test"
+     Owner       = "tf"
      Project     = "bot"
    }
  }
@@ -17,5 +18,9 @@ terraform {
     region = "us-west-2"
   }
 }
+
+
+
+
 
 

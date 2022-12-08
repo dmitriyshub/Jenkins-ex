@@ -1,5 +1,5 @@
 resource "aws_sqs_queue" "sqs_queue" {
-  name                      = "dmitriyshub-bot-queue"
+  name                      = var.sqs_queue
   delay_seconds             = 10
   max_message_size          = 262144
   message_retention_seconds = 86400
@@ -7,6 +7,6 @@ resource "aws_sqs_queue" "sqs_queue" {
   visibility_timeout_seconds = 1800
 
   tags = {
-    Name = "dmitriyshub-bot-queue"
+    Name = "bot-queue"
   }
 }
