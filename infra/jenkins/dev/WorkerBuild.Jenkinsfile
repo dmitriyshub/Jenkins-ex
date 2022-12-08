@@ -11,6 +11,7 @@ pipeline {
         REGISTRY_URL = "352708296901.dkr.ecr.us-west-2.amazonaws.com"
         IMAGE_TAG = "0.0.$BUILD_NUMBER"
         IMAGE_NAME = "dmitriyshub-worker-dev"
+        FULL_URL = "352708296901.dkr.ecr.us-west-2.amazonaws.com/dmitriyshub-worker-dev:0.0.$BUILD_NUMBER"
         REGION_NAME = "us-west-2"
         DOCKER_FILE_PATH = "services/worker/Dockerfile"
     }
@@ -22,17 +23,36 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        stage('Build Worker Image') {
             options {
                 timeout(time: 10, unit: 'MINUTES')
             }
 
             steps {
-                // TODO dev bot build stage
                 sh '''
                 aws ecr get-login-password --region $REGION_NAME | docker login --username AWS --password-stdin $REGISTRY_URL
-                docker build -t $IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
-                docker tag $IMAGE_NAME:$IMAGE_TAG $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
+                docker build -t $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
+                '''
+            }
+        }
+
+        stage('Test Worker Image') {
+            steps {
+                withCredentials([string(credentialsId: 'snyk', variable: 'SNYK_TOKEN')]) {
+                    sh '''
+                    snyk container test $FULL_URL --severity-threshold=high --file=./$DOCKER_FILE_PATH
+                    '''
+               }
+            }
+        }
+
+        stage('Push Worker Image') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
+
+            steps {
+                sh '''
                 docker push $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
                 '''
             }
@@ -44,6 +64,18 @@ pipeline {
                     string(name: 'WORKER_IMAGE_NAME', value: "${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}")
                 ]
             }
+        }
+
+        stage('Clean WorkSpace') {
+            steps {
+                cleanWs()
+            }
+        }
+    }
+
+    post {
+        always {
+            emailext body: 'A Test EMail', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
         }
     }
 }

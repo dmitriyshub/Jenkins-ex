@@ -31,12 +31,25 @@ pipeline {
             options {
                 timeout(time: 15, unit: 'MINUTES')
             }
+
             steps {
                 sh '''
                 echo "Terraform action is --> ${action}"
                 terraform -chdir=./infra/terraform ${action} --auto-approve
                 '''
             }
+        }
+
+        stage('Clean WorkSpace') {
+            steps {
+                cleanWs()
+            }
+        }
+    }
+
+    post {
+        always {
+            emailext body: 'A Test EMail', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
         }
     }
 }

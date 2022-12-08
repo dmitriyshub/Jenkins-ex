@@ -11,6 +11,7 @@ pipeline {
         REGISTRY_URL = "352708296901.dkr.ecr.us-west-2.amazonaws.com"
         IMAGE_TAG = "0.0.$BUILD_NUMBER"
         IMAGE_NAME = "dmitriyshub-bot-prod"
+        FULL_URL = "352708296901.dkr.ecr.us-west-2.amazonaws.com/dmitriyshub-bot-prod:0.0.$BUILD_NUMBER"
         REGION_NAME = "us-west-2"
         DOCKER_FILE_PATH = "services/bot/Dockerfile"
     }
@@ -22,31 +23,58 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        stage('Build Bot Image') {
             options {
                 timeout(time: 12, unit: 'MINUTES')
             }
 
             steps {
-                // TODO dev bot build stage
                 sh '''
                 aws ecr get-login-password --region $REGION_NAME | docker login --username AWS --password-stdin $REGISTRY_URL
-                docker build -t $IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
-                docker tag $IMAGE_NAME:$IMAGE_TAG $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
+                docker build -t $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
+                '''
+            }
+        }
+
+        stage('Test Bot Image') {
+            steps {
+                withCredentials([string(credentialsId: 'snyk', variable: 'SNYK_TOKEN')]) {
+                    sh '''
+                    snyk container test $FULL_URL --severity-threshold=high --file=./$DOCKER_FILE_PATH
+                    '''
+               }
+            }
+        }
+
+        stage('Push Bot Image') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
+            steps {
+                sh '''
                 docker push $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
 
-        stage('Trigger Deploy') {
+        stage('Trigger Bot Deploy') {
             steps {
                 build job: 'BotDeploy', wait: false, parameters: [
                     string(name: 'BOT_IMAGE_NAME', value: "${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}")
                 ]
             }
         }
+
+        stage('Clean WorkSpace') {
+            steps {
+                cleanWs()
+            }
+        }
+    }
+
+    post {
+        always {
+            emailext body: 'A Test EMail', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
+        }
     }
 }
-
-
-
