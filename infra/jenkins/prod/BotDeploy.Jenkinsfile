@@ -33,11 +33,20 @@ pipeline {
                     # apply the configurations to k8s cluster
                     kubectl apply --kubeconfig ${KUBECONFIG} -f $K8S_CONFIGS/bot.yaml
                     '''
+                    }
                 }
+            }
+
+        stage('Clean WorkSpace') {
+            steps {
+                cleanWs()
             }
         }
     }
 
-    // TODO prod bot deploy pipeline
-
+    post {
+        always {
+            emailext body: 'A Test EMail', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
+        }
+    }
 }
