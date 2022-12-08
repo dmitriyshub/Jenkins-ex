@@ -32,7 +32,6 @@ pipeline {
                 sh '''
                 aws ecr get-login-password --region $REGION_NAME | docker login --username AWS --password-stdin $REGISTRY_URL
                 docker build -t $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
-                docker push $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
