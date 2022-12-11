@@ -7,6 +7,11 @@ resource "aws_instance" "k8sInstance" {
     vpc_security_group_ids = ["${aws_security_group.allow_tcp_k8s.id}"]
     subnet_id = aws_subnet.public_subnet.id
     iam_instance_profile = aws_iam_instance_profile.k8s-profile.name
+    root_block_device {
+      tags                  = {}
+      volume_size           = 15
+
+  }
     tags = {
         Name = "k8s-Instance"
     }
