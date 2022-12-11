@@ -32,7 +32,6 @@ pipeline {
                 sh '''
                 aws ecr get-login-password --region $REGION_NAME | docker login --username AWS --password-stdin $REGISTRY_URL
                 docker build -t $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG -f $DOCKER_FILE_PATH .
-                docker push $REGISTRY_URL/$IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
@@ -64,6 +63,18 @@ pipeline {
                     string(name: 'BOT_IMAGE_NAME', value: "${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}")
                 ]
             }
+        }
+
+        stage('Clean WorkSpace') {
+            steps {
+                cleanWs()
+            }
+        }
+    }
+
+    post {
+        always {
+            emailext body: 'A Test EMail', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
         }
     }
 }
